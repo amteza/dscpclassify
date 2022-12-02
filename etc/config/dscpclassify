@@ -7,10 +7,56 @@ config global 'global'
 	option wmm '1'
 
 config set
-	option name 'xcloud'
+	option name 'pentanet'
 	option family 'ipv4'
 	option interval '1'
-	list element '13.104.0.0/14' # Western Europe
+	list element '103.6.211.0/24'
+
+config set
+        option name 'slcerner'
+	option family 'ipv4'
+        option interval '1'
+	option automerge '1'
+        list element '159.140.192.0/23'
+        list element '159.140.204.0/24'
+        list element '198.203.228.0/23'
+        list element '159.140.4.0/23'
+        list element '159.140.207.0/24'
+        list element '159.140.142.0/23'
+        list element '159.140.194.0/23'
+        list element '159.140.205.0/24'
+        list element '159.140.244.0/24'
+        list element '159.140.206.0/23'
+        list element '159.140.6.0/23'
+        list element '159.140.192.0/22'
+        list element '159.140.204.0/23'
+        list element '159.140.206.0/24'
+        list element '159.140.198.0/24'
+        list element '159.140.0.0/22'
+
+config set
+        option name 'rsyncnet_4'
+        option family 'ipv4'
+        option interval '1'
+        list element '69.43.165.22'
+        list element '69.43.165.0/24'
+        list element '216.66.64.0/19'
+        list element '216.66.77.196/32'
+
+config set
+        option name 'rsyncnet_6'
+        option family 'ipv6'
+        option interval '1'
+        list element '2001:470:1:9a6::11'
+        list element '2607:1e00:1002::32'
+        list element '2001:470:1::/48'
+        list element '2607:1e00:1002::/48'
+
+config set
+	option name 'optusnet'
+	option family 'ipv4'
+	option interval '1'
+	list element '210.49.0.0/16'
 
 config rule
 	option name 'DNS'
@@ -34,19 +80,62 @@ config rule
 	option dest_port '123'
 	option class 'cs5'
 
-config rule
-	option name 'SSH'
-	option proto 'tcp'
-	option dest_port '22'
-	option class 'cs2'
+#config rule
+#	option name 'SSH'
+#	option proto 'tcp'
+#	option dest_port '22'
+#	option class 'cs2'
 
 config rule
-	option name 'Xbox Cloud Gaming'
+	option name 'Parsec'
 	option proto 'udp'
-	option dest_ip '@xcloud'
-	option dest_port '1000-1150'
+	option src_port '9000-9010'
+	option dest_port '8000-8010'
+	option class 'af41'
+	option counter '1'
+
+config rule
+	option name 'Facetime'
+	option proto 'udp'
+	list src_port '3478-3497'
+	list src_port '16384-16387'
+	list src_port '16393-16402'
+	list dest_port '3478-3497'
+	list dest_port '16384-16387'
+	list dest_port '16393-16402'
+	list dest_port '16609-16618'
+	option class 'af41'
+	option counter '1'
+
+config rule
+	option name 'Ring'
+	option proto 'udp'
+	option src_ip '192.168.1.125'
+	#list dest_port '1-442' # exclude port 443 (not way to negate yet)
+	#list dest_port '444-65535'
+	option dest_port '!443'
 	option class 'af41'
 	option family 'ipv4'
+	option counter '1'
+
+config rule
+	option name 'GeForce NOW Cloud Gaming (stream)'
+	option proto 'udp'
+	option dest_ip '@pentanet'
+	option src_port '49003-49005'
+	option class 'af41'
+	option family 'ipv4'
+	option counter '1'
+
+config rule
+        option name 'GeForce NOW Cloud Gaming (controls)'
+        list proto 'udp'
+	list proto 'tcp'
+        option dest_ip '@pentanet'
+        option src_port '49006'
+        option class 'ef'
+        option family 'ipv4'
+	option counter '1'
 
 config rule
 	option name 'Teams voice'
@@ -54,6 +143,7 @@ config rule
 	option src_port '50000-50019'
 	option dest_port '3478-3481'
 	option class 'ef'
+	option counter '1'
 
 config rule
 	option name 'Teams video'
@@ -61,6 +151,7 @@ config rule
 	option src_port '50020-50039'
 	option dest_port '3478-3481'
 	option class 'af41'
+	option counter '1'
 
 config rule
 	option name 'Teams sharing'
@@ -68,6 +159,76 @@ config rule
 	option src_port '50040-50059'
 	option dest_port '3478-3481'
 	option class 'af21'
+	option counter '1'
+
+config rule
+        option name 'Whatsup / Zoom'
+        option proto 'udp'
+        list dest_port '3478-3479'
+	list dest_port '8801-8810' 
+        option class 'af41'
+	option counter '1'
+
+config rule
+        option name 'Cerner servers'
+        otpion proto 'tcp'
+        option dest_ip '@slcerner'
+        option dest_port '22'
+        option class 'af41'
+        option family 'ipv4'
+	option counter '1'
+
+config rule
+        option name 'Game Consoles'
+        option proto 'udp'
+        list src_ip '192.168.1.105'
+	list src_ip '192.168.1.23'
+	#list dest_port '1-79' # Exclude ports 80 and 443 (no way to negate them yet)
+	#list dest_port '81-442'
+	#list dest_port '444-65535'
+	list dest_port '!80'
+	list dest_port '!443'
+	option class 'af41'
+        option family 'ipv4'
+	option counter '1'
+
+config rule
+	option name 'GSMA VoWi-Fi (1)'
+	option proto 'udp'
+	option dest_ip '@optusnet'
+	list dest_port '500'
+	list dest_port '4500'
+	option class 'ef'
+	option family 'ipv4'
+	option counter '1'
+
+config rule
+        option name 'GSMA VoWi-Fi (2)'
+        option proto 'udp'
+        option dest_ip '!@slcerner'
+        list dest_port '500'
+        list dest_port '4500'
+        option class 'ef'
+	option family 'ipv4'
+	option counter '1'
+
+config rule
+        option name 'rsync.net-ipv4'
+        option proto 'tcp'
+        option dest_ip '@rsyncnet_4'
+        option dest_port '22'
+        option class 'cs1'
+        option family 'ipv4'
+	option counter '1'
+
+config rule
+        option name 'rsync.net-ipv6'
+        option proto 'tcp'
+        option dest_ip '@rsyncnet_6'
+        option dest_port '22'
+        option class 'cs1'
+        option family 'ipv6'
+	option counter '1'
 
 config rule
 	option name 'ICMP'
